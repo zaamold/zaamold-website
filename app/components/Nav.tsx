@@ -8,6 +8,10 @@ import styles from "../styles/layout.module.css";
 export const Nav = () => {
   const pathname = usePathname();
 
+  if(pathname === "/game") {
+    return null;
+  }
+
   return (
     <nav className={styles.nav}>
       <Link
@@ -31,6 +35,14 @@ export const Nav = () => {
         href="/quotes"
       >
         Quotes
+      </Link>
+      <Link
+        className={`${styles.link} ${
+          pathname === "/game" ? styles.active : ""
+        }`}
+        href="/game"
+      >
+        Game
       </Link>
     </nav>
   );
