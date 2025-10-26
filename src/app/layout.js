@@ -1,3 +1,4 @@
+import Header from "../../components/ui/header";
 import "./globals.css";
 import { Nunito } from "next/font/google";
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${nunito.className} antialiased`}
       >
+        <Header />
         {children}
       </body>
     </html>

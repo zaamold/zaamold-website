@@ -15,7 +15,7 @@ export default function Headshot() {
 
             {/* First outline (slightly larger) */}
             <Image
-            className="absolute px-1 py-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 scale-[1.15] w-64 h-64 object-cover rounded-full animate-rotate-slow"
+            className="absolute px-1 py-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 scale-[1.18] w-64 h-64 object-cover rounded-full animate-rotate-slow"
             src="/images/headshot/headshot-02-askew.png"
             width={2150}
             height={2175}
