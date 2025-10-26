@@ -12,11 +12,38 @@ module.exports = {
       // Extend Tailwind's default theme to add custom styles
       extend: {
         // Example: Custom colors
-        // colors: {
-        //   'primary': '#FF6347', // Tomato color
-        //   'secondary': '#4682B4', // Steel Blue
-        //   'accent': '#3CB371', // Medium Sea Green
-        // },
+        colors: {
+          'purple-50': 'EAE3F2',
+          'purple-100': '#D5C8E4',
+          'purple-200': '#C0ACD7',
+          'purple-300': '#AB91CA',
+          'purple-400': '#9575BD',
+          'purple-500': '#7851A8',
+          'purple-600': '#6C4997',
+          'purple-700': '#593C7C',
+          'purple-800': '#452E60',
+          'purple-900': '#322145',
+          'orange-50': '#FFE6C2',
+          'orange-100': '#FFD599',
+          'orange-200': '#FFC370',
+          'orange-300': '#FFB346',
+          'orange-400': '#FFA21F',
+          'orange-500': '#F58F00',
+          'orange-600': '#CC7700',
+          'orange-700': '#A35F00',
+          'orange-800': '#7A4700',
+          'orange-900': '#523000',
+          'blue-50': '#EEF8FC',
+          'blue-100': '#CCEBF5',
+          'blue-200': '#B2E2F0',
+          'blue-300': '#99D8EB',
+          'blue-400': '#77CBE4',
+          'blue-500': '#55BDDD',
+          'blue-600': '#33B0D7',
+          'blue-700': '#2598BB',
+          'blue-800': '#1B6F88',
+          'blue-900': '#145366',
+        },
         // Example: Custom font families
         // fontFamily: {
         //   'sans': ['Roboto', 'sans-serif'],
