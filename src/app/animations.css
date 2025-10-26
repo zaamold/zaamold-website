@@ -1,0 +1,32 @@
+/* @import "tailwindcss"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes rotate-slow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1.08);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg) scale(1.08);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
