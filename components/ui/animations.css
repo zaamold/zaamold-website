@@ -4,12 +4,21 @@
 
 @keyframes rotate-slow {
   from {
-    transform: rotate(0deg) scale(1.08);
+    transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg) scale(1.08);
+    transform: rotate(360deg);
   }
 }
+
+@keyframes rotate-slow-reverse {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
 
 @keyframes pulse-soft {
   0%, 100% {
@@ -23,8 +32,12 @@
 }
 
 .animate-rotate-slow {
-  animation: rotate-slow 20s linear infinite;
+  animation: rotate-slow 10s linear infinite;
 }
+
+.animate-rotate-slow-reverse {
+    animation: rotate-slow-reverse 10s linear infinite;
+  }
 
 .animate-pulse-soft {
   animation: pulse-soft 4s ease-in-out infinite;
