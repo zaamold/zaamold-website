@@ -1,4 +1,12 @@
+/* Your custom CSS imports */
+/* @import "../../components/ui/animations.css"; */
+
+/* THEN Tailwind’s layers — these should always come last */
 @import "tailwindcss";
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
 
 /* :root {
   --background: #ffffff;
