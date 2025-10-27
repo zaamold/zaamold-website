@@ -11,12 +11,12 @@ export default function Header() {
 
   const navItems = [
     { name: "Portfolio", href: "/portfolio" },
-    { name: "Games", href: "/games" },
-    { name: "Music", href: "/music" },
+    // { name: "Games", href: "/games" },
+    // { name: "Music", href: "/music" },
   ];
 
   return (
-    <header className="sticky top-0 left-0 w-full bg-purple-50 backdrop-blur-md border-b border-gray-200 shadow-sm z-50">
+    <header className="sticky top-0 left-0 w-full bg-purple-100 backdrop-blur-md border-b border-gray-200 shadow-sm z-50">
       <div className="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
         {/* Logo / Site name */}
         <Link
