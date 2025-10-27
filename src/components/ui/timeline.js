@@ -42,7 +42,7 @@ export default function Timeline({ events }) {
                         <p className="mt-2 font-semibold">Technologies Used:</p>
                         <ul className="flex flex-col gap-y-[0.75]">
                         {event.technologies.map(tech => (
-                            <li className="text-sm">{tech}</li>
+                            <li key={tech} className="text-sm">{tech}</li>
                         ))}
                         </ul>
                     </div>
@@ -52,7 +52,7 @@ export default function Timeline({ events }) {
                         <p className="mt-2 font-semibold">Links:</p>
                         <ul>
                         {event.links.map(link => (
-                            <li className="text-sm underline hover:text-purple-700 transition-all"><a href={link.href} target="_blank">{link.name}</a></li>
+                            <li key={link.name} className="text-sm underline hover:text-purple-700 transition-all"><a href={link.href} target="_blank">{link.name}</a></li>
                         ))}
                         </ul>
                     </div>
