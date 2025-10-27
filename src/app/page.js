@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Headshot from "../../components/ui/headshot";
-import RotatingWords from "../../components/ui/rotating-words";
+import Headshot from "../components/ui/headshot";
+import RotatingWords from "../components/ui/rotating-words";
 
 export default function Home() {
   return (
