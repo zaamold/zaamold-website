@@ -1,16 +1,18 @@
 import Image from "next/image";
 import "./animations.css";
+import ZoomingImage from "./zooming-image";
 
 export default function Headshot() {
     return (
         <div className="flex justify-center items-center relative w-64 h-64">
             {/* Main image */}
-            <Image
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-64 h-64 object-cover rounded-full"
+            <ZoomingImage 
+            style="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-64 h-64 object-cover rounded-full"
             src="/images/headshot/headshot-01.png"
             width={2002}
             height={2002}
             alt="Zach Aamold Image"
+            hoverText="It's me!"
             />
 
             {/* First outline (slightly larger) */}
