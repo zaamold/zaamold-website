@@ -51,9 +51,9 @@ export default function Home() {
         </Link>
       </div>
     </div>
-    <div className="bg-white py-20 flex flex-col max-w-full justify-around items-center">
+    {/* <div className="bg-white py-20 flex flex-col max-w-full justify-around items-center">
       <p className="text-4xl font-bold text-center">About Me</p>
-    </div>
+    </div> */}
     </>
   );
 }
