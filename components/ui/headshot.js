@@ -4,10 +4,10 @@ import ZoomingImage from "./zooming-image";
 
 export default function Headshot() {
     return (
-        <div className="flex justify-center items-center relative w-64 h-64">
+        <div className="flex justify-center items-center relative md:w-64 md:h-64 w-48 h-48">
             {/* Main image */}
             <ZoomingImage 
-            style="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-64 h-64 object-cover rounded-full"
+            style="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 md:w-64 md:h-64 w-48 h-48 object-cover rounded-full"
             src="/images/headshot/headshot-01.png"
             width={2002}
             height={2002}
@@ -17,7 +17,7 @@ export default function Headshot() {
 
             {/* First outline (slightly larger) */}
             <Image
-            className="absolute px-1 py-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 scale-[1.18] w-64 h-64 object-cover rounded-full animate-rotate-slow"
+            className="absolute px-1 py-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 scale-[1.18] md:w-64 md:h-64 w-48 h-48 object-cover rounded-full animate-rotate-slow"
             src="/images/headshot/headshot-02-askew.png"
             width={2150}
             height={2175}
@@ -26,7 +26,7 @@ export default function Headshot() {
 
             {/* Second outline (even larger) */}
             <Image
-            className="absolute px-1 py-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 scale-[1.2] w-64 h-64 object-cover rounded-full animate-rotate-slow-reverse"
+            className="absolute px-1 py-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 scale-[1.2] md:w-64 md:h-64 w-48 h-48 object-cover rounded-full animate-rotate-slow-reverse"
             src="/images/headshot/headshot-03.png"
             width={2250}
             height={2250}
