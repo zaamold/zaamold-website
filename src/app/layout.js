@@ -1,3 +1,4 @@
+import Footer from "../../components/ui/footer";
 import Header from "../../components/ui/header";
 import "./globals.css";
 import { Nunito } from "next/font/google";
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       >
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
