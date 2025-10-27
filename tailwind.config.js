@@ -13,7 +13,7 @@ module.exports = {
       extend: {
         // Example: Custom colors
         colors: {
-          'purple-50': 'EAE3F2',
+          'purple-50': '#EAE3F2',
           'purple-100': '#D5C8E4',
           'purple-200': '#C0ACD7',
           'purple-300': '#AB91CA',
