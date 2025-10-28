@@ -11,7 +11,7 @@ export default function Header() {
 
   const navItems = [
     { name: "Portfolio", href: "/portfolio" },
-    // { name: "Games", href: "/games" },
+    { name: "Games", href: "/games" },
     // { name: "Music", href: "/music" },
   ];
 

@@ -27,6 +27,24 @@
   }
 }
 
+@keyframes pulse-fast {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes pulse-fast-rotated {
+  0%, 100% {
+    transform: scale(1) rotate(-18deg);
+  }
+  50% {
+    transform: scale(1.08) rotate(-18deg);
+  }
+}
+
 .animate-rotate-slow {
   animation: rotate-slow 10s linear infinite;
 }
@@ -37,4 +55,14 @@
 
 .animate-pulse-soft {
   animation: pulse-soft 4s ease-in-out infinite;
+}
+
+.pulse-fast {
+  animation: pulse-fast 0.8s ease-in-out infinite;
+}
+
+.games-splash-text {
+  display: inline-block;
+  animation: pulse-fast-rotated 0.8s ease-in-out infinite;
+  transform-origin: center;
 }
