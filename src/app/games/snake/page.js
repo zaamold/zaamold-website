@@ -1,9 +1,12 @@
 "use client";
 import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scroll";
+import { useDisableSwipeScroll } from "@/components/hooks/use-disable-swipe-scroll";
 import { useState, useEffect, useRef } from "react";
 
 export default function SnakeGame() {
   useDisableArrowScroll();
+  const gameRef = useRef(null);
+  useDisableSwipeScroll(gameRef);
   const gridSize = 20; // 20x20 cells
   const cellSize = 20; // pixels per cell
 
@@ -14,23 +17,6 @@ export default function SnakeGame() {
 
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
-  const gameRef = useRef(null);
-
-  useEffect(() => {
-    const el = gameRef.current;
-    if (!el) return;
-
-    const preventScroll = (e) => {
-      e.preventDefault();
-    };
-
-    // Use non-passive listener so preventDefault actually works
-    el.addEventListener("touchmove", preventScroll, { passive: false });
-
-    return () => {
-      el.removeEventListener("touchmove", preventScroll);
-    };
-  }, []);
 
   // Handle arrow keys
   const handleKeyDown = (e) => {
