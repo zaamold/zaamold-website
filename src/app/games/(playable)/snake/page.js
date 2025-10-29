@@ -138,10 +138,7 @@ export default function SnakeGame() {
 
         const newSnake = [head, ...prev];
         if (head.x === food.x && head.y === food.y) {
-          setFood({
-            x: Math.floor(Math.random() * gridSize),
-            y: Math.floor(Math.random() * gridSize),
-          });
+          generateFood();
         } else {
           newSnake.pop();
         }
@@ -152,6 +149,23 @@ export default function SnakeGame() {
     }, 150);
     return () => clearInterval(interval);
   }, [dir, food, gameOver]);
+
+  const generateFood = () => {
+    // Creates a collection of all grid spaces occupied by snake
+    const occupied = new Set(snake.map((seg) => `${seg.x},${seg.y}`));
+    const freeSpots = [];
+
+    for (let x = 0; x < gridSize; x++) {
+      for (let y = 0; y < gridSize; y++) {
+        // Adds unoccupied spaces to an array
+        if (!occupied.has(`${x},${y}`)) freeSpots.push({ x, y });
+      }
+    }
+
+    // Picks an unoccupied space to put the next piece of food in
+    const index = Math.floor(Math.random() * freeSpots.length);
+    setFood(freeSpots[index]);
+  };
 
   const onGameOver = () => {
     setGameOver(true);
