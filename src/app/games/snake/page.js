@@ -8,7 +8,6 @@ export default function SnakeGame() {
   const gameRef = useRef(null);
   useDisableSwipeScroll(gameRef);
   const gridSize = 20; // 20x20 cells
-  const cellSize = 20; // pixels per cell
 
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 5, y: 5 });
@@ -17,6 +16,24 @@ export default function SnakeGame() {
 
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
+  const DEFAULT_CELL_SIZE = 20;
+  const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const viewportWidth = window.innerWidth;
+      if (viewportWidth < 640) {
+        // Make grid fit 90% of viewport width
+        setCellSize((viewportWidth * 0.9) / gridSize);
+      } else {
+        setCellSize(DEFAULT_CELL_SIZE); // Default desktop size
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [gridSize]);
 
   // Handle arrow keys
   const handleKeyDown = (e) => {
@@ -153,12 +170,12 @@ export default function SnakeGame() {
   return (
     <div
       ref={gameRef}
-      className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white touch-none select-none"
+      className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white"
     >
       <h1 className="text-2xl mb-4">Snake Game</h1>
 
       <div
-        className="relative bg-gray-800"
+        className="relative bg-gray-800 w-[90vw] max-w-[min(100vw,400px)] aspect-square sm:w-auto sm:h-auto touch-none select-none"
         style={{
           width: gridSize * cellSize,
           height: gridSize * cellSize,
