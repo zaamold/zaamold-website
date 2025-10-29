@@ -115,7 +115,7 @@ export default function SnakeGame() {
           head.y >= gridSize ||
           prev.some((p) => p.x === head.x && p.y === head.y)
         ) {
-          setGameOver(true);
+          onGameOver();
           return prev;
         }
 
@@ -136,9 +136,15 @@ export default function SnakeGame() {
     return () => clearInterval(interval);
   }, [dir, food, gameOver]);
 
+  const onGameOver = () => {
+    setGameOver(true);
+    // Returns the snake to its original state -
+    // prevents player from lerping on restart
+    setSnake([{ x: 10, y: 10 }]);
+  };
+
   // Restart the game
   const restart = () => {
-    setSnake([{ x: 10, y: 10 }]);
     setFood({ x: 5, y: 5 });
     setDir("RIGHT");
     setGameOver(false);
@@ -147,53 +153,58 @@ export default function SnakeGame() {
   return (
     <div
       ref={gameRef}
-      className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white touch-none"
+      className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white touch-none select-none"
     >
-      <h1 className="text-2xl mb-4">🐍 Smooth Snake Game</h1>
-      {gameOver ? (
-        <button
-          onClick={restart}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
-        >
-          Restart
-        </button>
-      ) : (
-        <div
-          className="relative bg-gray-800"
-          style={{
-            width: gridSize * cellSize,
-            height: gridSize * cellSize,
-          }}
-        >
-          {/* Snake segments */}
-          {snake.map((seg, i) => (
-            <div
-              key={i}
-              className="absolute bg-green-500 transition-transform duration-150"
-              style={{
-                width: cellSize,
-                height: cellSize,
-                transform: `translate(${seg.x * cellSize}px, ${
-                  seg.y * cellSize
-                }px)`,
-                borderRadius: i === 0 ? "4px" : "2px",
-              }}
-            />
-          ))}
+      <h1 className="text-2xl mb-4">Snake Game</h1>
 
-          {/* Food */}
+      <div
+        className="relative bg-gray-800"
+        style={{
+          width: gridSize * cellSize,
+          height: gridSize * cellSize,
+        }}
+      >
+        {/* Snake segments */}
+        {snake.map((seg, i) => (
           <div
-            className="absolute bg-red-500 rounded-sm"
+            key={i}
+            className="absolute bg-green-500 transition-transform duration-150"
             style={{
               width: cellSize,
               height: cellSize,
-              transform: `translate(${food.x * cellSize}px, ${
-                food.y * cellSize
+              transform: `translate(${seg.x * cellSize}px, ${
+                seg.y * cellSize
               }px)`,
+              borderRadius: i === 0 ? "4px" : "2px",
             }}
           />
-        </div>
-      )}
+        ))}
+
+        {/* Food */}
+        <div
+          className="absolute bg-red-500 rounded-sm"
+          style={{
+            width: cellSize,
+            height: cellSize,
+            transform: `translate(${food.x * cellSize}px, ${
+              food.y * cellSize
+            }px)`,
+          }}
+        />
+
+        {/* Game Over Overlay */}
+        {gameOver && (
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center space-y-4">
+            <p className="text-xl font-semibold">Game Over!</p>
+            <button
+              onClick={restart}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
+            >
+              Restart
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
