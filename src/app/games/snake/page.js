@@ -13,34 +13,101 @@ export default function SnakeGame() {
   const [gameOver, setGameOver] = useState(false);
 
   const directionLocked = useRef(false);
+  const touchStart = useRef(null);
+  const gameRef = useRef(null);
 
-  // Handle key presses
+  useEffect(() => {
+    const el = gameRef.current;
+    if (!el) return;
+
+    const preventScroll = (e) => {
+      e.preventDefault();
+    };
+
+    // Use non-passive listener so preventDefault actually works
+    el.addEventListener("touchmove", preventScroll, { passive: false });
+
+    return () => {
+      el.removeEventListener("touchmove", preventScroll);
+    };
+  }, []);
+
+  // Handle arrow keys
   const handleKeyDown = (e) => {
     if (directionLocked.current) return;
-    const newDirection = (() => {
-      switch (e.key) {
-        case "ArrowUp":
-          return dir !== "DOWN" ? "UP" : dir;
-        case "ArrowDown":
-          return dir !== "UP" ? "DOWN" : dir;
-        case "ArrowLeft":
-          return dir !== "RIGHT" ? "LEFT" : dir;
-        case "ArrowRight":
-          return dir !== "LEFT" ? "RIGHT" : dir;
-        default:
-          return dir;
-      }
-    })();
 
-    if (newDirection !== dir) {
+    const newDirection = getNewDirection(e.key);
+    if (newDirection) {
       setDir(newDirection);
-      directionLocked.current = true; // prevent further changes this frame
+      directionLocked.current = true;
     }
   };
 
+  // Handle swipe start
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  // Handle swipe end
+  const handleTouchEnd = (e) => {
+    if (!touchStart.current) return;
+
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStart.current.x;
+    const dy = touch.clientY - touchStart.current.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      // horizontal swipe
+      if (dx > 30) changeDirection("RIGHT");
+      else if (dx < -30) changeDirection("LEFT");
+    } else {
+      // vertical swipe
+      if (dy > 30) changeDirection("DOWN");
+      else if (dy < -30) changeDirection("UP");
+    }
+
+    touchStart.current = null;
+  };
+
+  const changeDirection = (newDir) => {
+    if (directionLocked.current) return;
+    if (isOpposite(dir, newDir)) return;
+    setDir(newDir);
+    directionLocked.current = true;
+  };
+
+  const getNewDirection = (key) => {
+    switch (key) {
+      case "ArrowUp":
+        return dir !== "DOWN" ? "UP" : null;
+      case "ArrowDown":
+        return dir !== "UP" ? "DOWN" : null;
+      case "ArrowLeft":
+        return dir !== "RIGHT" ? "LEFT" : null;
+      case "ArrowRight":
+        return dir !== "LEFT" ? "RIGHT" : null;
+      default:
+        return null;
+    }
+  };
+
+  const isOpposite = (a, b) =>
+    (a === "UP" && b === "DOWN") ||
+    (a === "DOWN" && b === "UP") ||
+    (a === "LEFT" && b === "RIGHT") ||
+    (a === "RIGHT" && b === "LEFT");
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
   }, [dir]);
 
   // Game loop
@@ -92,7 +159,10 @@ export default function SnakeGame() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+    <div
+      ref={gameRef}
+      className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white touch-none"
+    >
       <h1 className="text-2xl mb-4">🐍 Smooth Snake Game</h1>
       {gameOver ? (
         <button
