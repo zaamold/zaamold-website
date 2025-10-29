@@ -1,7 +1,9 @@
 "use client";
+import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scroll";
 import { useState, useEffect } from "react";
 
 export default function SnakeGame() {
+    useDisableArrowScroll();
   const gridSize = 20; // 20x20 cells
   const cellSize = 20; // pixels per cell
 
@@ -13,9 +15,6 @@ export default function SnakeGame() {
   // Handle key presses
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                e.preventDefault(); // stop page scrolling
-            }
         if (e.key === "ArrowUp" && dir !== "DOWN") setDir("UP");
         if (e.key === "ArrowDown" && dir !== "UP") setDir("DOWN");
         if (e.key === "ArrowLeft" && dir !== "RIGHT") setDir("LEFT");
