@@ -3,7 +3,7 @@ import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scro
 import { useState, useEffect } from "react";
 
 export default function SnakeGame() {
-    useDisableArrowScroll();
+  useDisableArrowScroll();
   const gridSize = 20; // 20x20 cells
   const cellSize = 20; // pixels per cell
 
@@ -13,16 +13,16 @@ export default function SnakeGame() {
   const [gameOver, setGameOver] = useState(false);
 
   // Handle key presses
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-        if (e.key === "ArrowUp" && dir !== "DOWN") setDir("UP");
-        if (e.key === "ArrowDown" && dir !== "UP") setDir("DOWN");
-        if (e.key === "ArrowLeft" && dir !== "RIGHT") setDir("LEFT");
-        if (e.key === "ArrowRight" && dir !== "LEFT") setDir("RIGHT");
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [dir]);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowUp" && dir !== "DOWN") setDir("UP");
+      if (e.key === "ArrowDown" && dir !== "UP") setDir("DOWN");
+      if (e.key === "ArrowLeft" && dir !== "RIGHT") setDir("LEFT");
+      if (e.key === "ArrowRight" && dir !== "LEFT") setDir("RIGHT");
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [dir]);
 
   // Game loop
   useEffect(() => {

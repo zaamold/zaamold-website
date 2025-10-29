@@ -24,7 +24,8 @@ export default function TechGrid() {
     },
     {
       name: "GitHub",
-      description: "A platform for hosting, collaborating on, and reviewing code.",
+      description:
+        "A platform for hosting, collaborating on, and reviewing code.",
       link: "https://docs.github.com/en/get-started/start-your-journey/about-github-and-git",
       icon: "/icons/github-icon-purple.png",
     },
@@ -44,7 +45,9 @@ export default function TechGrid() {
 
   return (
     <section className="py-10">
-      <h2 className="text-4xl font-bold text-center mb-12">This website is powered by:</h2>
+      <h2 className="text-4xl font-bold text-center mb-12">
+        This website is powered by:
+      </h2>
 
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto px-4">
         {techList.map((tech) => (
@@ -67,10 +70,12 @@ export default function TechGrid() {
             >
               {/* Front side */}
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 [backface-visibility:hidden]">
-                <img src={tech.icon} alt={tech.name} className="w-16 h-16 mb-4" />
-                <h3 className="text-xl font-semibold">
-                  {tech.name}
-                </h3>
+                <img
+                  src={tech.icon}
+                  alt={tech.name}
+                  className="w-16 h-16 mb-4"
+                />
+                <h3 className="text-xl font-semibold">{tech.name}</h3>
               </div>
 
               {/* Back side */}

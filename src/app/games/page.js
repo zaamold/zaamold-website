@@ -4,7 +4,6 @@ import Link from "next/link";
 import "../../components/ui/animations.css";
 
 export default function GamesPage() {
-
   const gameList = [
     {
       name: "Snake Game",
@@ -15,13 +14,11 @@ export default function GamesPage() {
         width: 2002,
         height: 2002,
         alt: "Snake Game Image",
-        hoverText: "Chase the snacks!"
+        hoverText: "Chase the snacks!",
       },
-      creators: [
-        "Zachary Aamold",
-      ]
+      creators: ["Zachary Aamold"],
     },
-  ]
+  ];
 
   const tagLines = [
     "Come on, pick one!",
@@ -30,8 +27,8 @@ export default function GamesPage() {
     "I'll make more of these eventually",
     "oh snap",
     "One-stop shop",
-    "What will it do with a really long one? Hwehwehwehwehwehwehwehwe"
-  ]
+    "What will it do with a really long one? Hwehwehwehwehwehwehwehwe",
+  ];
 
   const tagLineIndex = Helper.getRandomInt(0, tagLines.length);
 
@@ -45,23 +42,25 @@ export default function GamesPage() {
       </h1>
 
       <div className="flex flex-wrap justify-center items-center gap-16 mx-auto my-8 px-4">
-        {gameList.map(game => {
+        {gameList.map((game) => {
           return (
             <Link href={game.href} key={game.name} className="w-2/3 sm:w-1/5">
               <ZoomingImage
-              style={game.img.style}
-              src={game.img.src}
-              width={game.img.width}
-              height={game.img.height}
-              alt={game.img.alt}
-              hoverText={game.img.hoverText}
+                style={game.img.style}
+                src={game.img.src}
+                width={game.img.width}
+                height={game.img.height}
+                alt={game.img.alt}
+                hoverText={game.img.hoverText}
               />
-              <p className="w-full text-left pt-4 text-3xl font-bold hover:underline">{game.name}</p>
+              <p className="w-full text-left pt-4 text-3xl font-bold hover:underline">
+                {game.name}
+              </p>
               {game.creators && (
                 <div>
                   <p className="font-semibold">Made by:</p>
                   <ul className="italic text-sm">
-                    {game.creators.map(creator => (
+                    {game.creators.map((creator) => (
                       <li key={creator}>{creator}</li>
                     ))}
                   </ul>
@@ -74,4 +73,3 @@ export default function GamesPage() {
     </div>
   );
 }
-  
