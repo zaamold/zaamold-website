@@ -1,6 +1,6 @@
 "use client";
 import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scroll";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function SnakeGame() {
   useDisableArrowScroll();
@@ -12,14 +12,33 @@ export default function SnakeGame() {
   const [dir, setDir] = useState("RIGHT");
   const [gameOver, setGameOver] = useState(false);
 
+  const directionLocked = useRef(false);
+
   // Handle key presses
+  const handleKeyDown = (e) => {
+    if (directionLocked.current) return;
+    const newDirection = (() => {
+      switch (e.key) {
+        case "ArrowUp":
+          return dir !== "DOWN" ? "UP" : dir;
+        case "ArrowDown":
+          return dir !== "UP" ? "DOWN" : dir;
+        case "ArrowLeft":
+          return dir !== "RIGHT" ? "LEFT" : dir;
+        case "ArrowRight":
+          return dir !== "LEFT" ? "RIGHT" : dir;
+        default:
+          return dir;
+      }
+    })();
+
+    if (newDirection !== dir) {
+      setDir(newDirection);
+      directionLocked.current = true; // prevent further changes this frame
+    }
+  };
+
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowUp" && dir !== "DOWN") setDir("UP");
-      if (e.key === "ArrowDown" && dir !== "UP") setDir("DOWN");
-      if (e.key === "ArrowLeft" && dir !== "RIGHT") setDir("LEFT");
-      if (e.key === "ArrowRight" && dir !== "LEFT") setDir("RIGHT");
-    };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [dir]);
@@ -56,6 +75,8 @@ export default function SnakeGame() {
         } else {
           newSnake.pop();
         }
+        // unlock directional input at start of next frame
+        directionLocked.current = false;
         return newSnake;
       });
     }, 150);
