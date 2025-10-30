@@ -33,6 +33,15 @@ export default function SnakeGame() {
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
 
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [isNewHighScore, setIsNewHighScore] = useState(false);
+
+  useEffect(() => {
+    const savedHighScore = localStorage.getItem("game/snake/high_score");
+    setHighScore(savedHighScore ? parseInt(savedHighScore, 10) : 0);
+
+    console.log("SAVED HIGH SCORE:", savedHighScore);
+  }, []);
 
   // Pauses game if document's visibility changes
   useVisibilityChange((isHidden) => {
@@ -228,6 +237,10 @@ export default function SnakeGame() {
         if (prev.length === 0) {
           clearInterval(interval);
           setGameState(GameState.GAME_OVER);
+          if (score > highScore) {
+            setHighScore(score);
+            localStorage.setItem("game/snake/high_score", score);
+          }
           return [];
         }
         i++;
@@ -328,6 +341,9 @@ export default function SnakeGame() {
           GameState.PAUSED,
         ].includes(gameState) && (
           <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
+            <div className="absolute top-2 left-2">
+              <p>High Score: {highScore}</p>
+            </div>
             <h1 className="text-2xl mb-4">{overlayText}</h1>
             {gameState === GameState.PAUSED && (
               <button
