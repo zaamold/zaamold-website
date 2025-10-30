@@ -12,7 +12,9 @@ export default function SnakeGame() {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 5, y: 5 });
   const [dir, setDir] = useState("RIGHT");
-  const [gameOver, setGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState(true);
+  const [gameOverText, setGameOverText] = useState("Snake Game");
+  const [animatingDeath, setAnimatingDeath] = useState(false);
 
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
@@ -115,7 +117,7 @@ export default function SnakeGame() {
 
   // Game loop
   useEffect(() => {
-    if (gameOver) return;
+    if (gameOver || animatingDeath) return;
     const interval = setInterval(() => {
       setSnake((prev) => {
         const head = { ...prev[0] };
@@ -148,7 +150,26 @@ export default function SnakeGame() {
       });
     }, 150);
     return () => clearInterval(interval);
-  }, [dir, food, gameOver]);
+  }, [dir, food, gameOver, animatingDeath]);
+
+  useEffect(() => {
+    if (!animatingDeath) return;
+
+    let i = 0;
+    const interval = setInterval(() => {
+      setSnake((prev) => {
+        if (prev.length === 0) {
+          clearInterval(interval);
+          setAnimatingDeath(false);
+          setGameOver(true);
+          return [];
+        }
+        return prev.slice(0, -1); // remove one tail segment
+      });
+    }, 100); // adjust speed here (ms per piece)
+
+    return () => clearInterval(interval);
+  }, [animatingDeath]);
 
   const generateFood = () => {
     // Creates a collection of all grid spaces occupied by snake
@@ -168,14 +189,13 @@ export default function SnakeGame() {
   };
 
   const onGameOver = () => {
-    setGameOver(true);
-    // Returns the snake to its original state -
-    // prevents player from lerping on restart
-    setSnake([{ x: 10, y: 10 }]);
+    setGameOverText("Game Over!");
+    setAnimatingDeath(true);
   };
 
   // Restart the game
   const restart = () => {
+    setSnake([{ x: 10, y: 10 }]);
     setFood({ x: 5, y: 5 });
     setDir("RIGHT");
     setGameOver(false);
@@ -186,8 +206,6 @@ export default function SnakeGame() {
       ref={gameRef}
       className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white"
     >
-      <h1 className="text-2xl mb-4">Snake Game</h1>
-
       <div
         className="relative bg-gray-800 w-[90vw] max-w-[min(100vw,400px)] aspect-square sm:w-auto sm:h-auto touch-none select-none"
         style={{
@@ -225,8 +243,8 @@ export default function SnakeGame() {
 
         {/* Game Over Overlay */}
         {gameOver && (
-          <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center space-y-4">
-            <p className="text-xl font-semibold">Game Over!</p>
+          <div className="absolute inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
+            <h1 className="text-2xl mb-4">{gameOverText}</h1>
             <button
               onClick={restart}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
