@@ -3,6 +3,7 @@ import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scro
 import { useDisableSpacebarScroll } from "@/components/hooks/use-disable-spacebar-scroll";
 import { useDisableSwipeScroll } from "@/components/hooks/use-disable-swipe-scroll";
 import { useVisibilityChange } from "@/components/hooks/use-visibility-change";
+import StringHelper from "@/utils/string-helper";
 import { useState, useEffect, useRef } from "react";
 
 export default function SnakeGame() {
@@ -28,7 +29,10 @@ export default function SnakeGame() {
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
   const DEFAULT_CELL_SIZE = 20;
+  const DEFAULT_DEATH_SPEED = 100;
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
+
+  const [score, setScore] = useState(0);
 
   // Pauses game if document's visibility changes
   useVisibilityChange((isHidden) => {
@@ -202,6 +206,9 @@ export default function SnakeGame() {
 
         const newSnake = [head, ...prev];
         if (head.x === food.x && head.y === food.y) {
+          console.log("NOM NOM");
+          console.log("Score:", score);
+          setScore(score + 1);
           generateFood();
         } else {
           newSnake.pop();
@@ -215,6 +222,7 @@ export default function SnakeGame() {
 
   const animateDeath = () => {
     let i = 0;
+    let deathSpeed = DEFAULT_DEATH_SPEED;
     let interval = setInterval(() => {
       setSnake((prev) => {
         if (prev.length === 0) {
@@ -222,9 +230,14 @@ export default function SnakeGame() {
           setGameState(GameState.GAME_OVER);
           return [];
         }
+        i++;
+        // Speed up the death animation for every 5 snake pieces "disappeared"
+        if (i % 5 === 0) {
+          deathSpeed = Math.max(10, deathSpeed - 10);
+        }
         return prev.slice(0, -1); // remove one tail segment
       });
-    }, 100); // adjust speed here (ms per piece)
+    }, deathSpeed);
     return interval;
   };
 
@@ -253,6 +266,7 @@ export default function SnakeGame() {
   const restart = () => {
     setSnake([{ x: 10, y: 10 }]);
     setFood({ x: 5, y: 5 });
+    setScore(0);
     setDir("RIGHT");
     setGameState(GameState.ACTIVE);
   };
@@ -274,6 +288,11 @@ export default function SnakeGame() {
           height: gridSize * cellSize,
         }}
       >
+        {/* Score */}
+        <p className="absolute z-30 top-4 left-1/2 -translate-x-1/2 opacity-50 text-lg text-center">
+          {score}
+        </p>
+
         {/* Snake segments */}
         {snake.map((seg, i) => (
           <div
@@ -308,21 +327,29 @@ export default function SnakeGame() {
           GameState.GAME_OVER,
           GameState.PAUSED,
         ].includes(gameState) && (
-          <div className="absolute inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
+          <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
             <h1 className="text-2xl mb-4">{overlayText}</h1>
             {gameState === GameState.PAUSED && (
               <button
                 onClick={() => setGameState(GameState.ACTIVE)}
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
               >
-                Continue (esc)
+                {"Continue" + StringHelper.desktopControls("esc")}
               </button>
+            )}
+            {gameState === GameState.GAME_OVER && (
+              <div className="text-center text-lg">
+                <p>Score:</p>
+                <p className="font-bold">{score}</p>
+              </div>
             )}
             <button
               onClick={restart}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
             >
-              {gameState === GameState.START_SCREEN ? "Begin" : "Restart (r)"}
+              {gameState === GameState.START_SCREEN
+                ? "Begin"
+                : "Restart" + StringHelper.desktopControls("r")}
             </button>
           </div>
         )}

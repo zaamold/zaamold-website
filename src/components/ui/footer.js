@@ -38,7 +38,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bottom-0 left-0 w-full bg-purple-100 backdrop-blur-md border-t border-gray-200 shadow-sm z-50">
+    <footer className="bottom-0 left-0 w-full bg-purple-100 backdrop-blur-md border-t border-gray-200 shadow-sm z-90">
       <div className="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
         {/* Logo / Site name */}
         <p className="text-xs md:text-sm">Find me around the internet!</p>
