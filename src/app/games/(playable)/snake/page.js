@@ -20,6 +20,7 @@ export default function SnakeGame() {
   const [food, setFood] = useState({ x: 5, y: 5 });
   const [dir, setDir] = useState("RIGHT");
   const [gameState, setGameState] = useState(GameState.START_SCREEN);
+  const gameStateRef = useRef(gameState);
 
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
@@ -42,8 +43,22 @@ export default function SnakeGame() {
     return () => window.removeEventListener("resize", handleResize);
   }, [gridSize]);
 
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+
   // Handle arrow keys
   const handleKeyDown = (e) => {
+    const currentState = gameStateRef.current;
+    if (e.key === "Escape") {
+      console.log(currentState);
+      if (currentState === GameState.ACTIVE) {
+        setGameState(GameState.PAUSED);
+      } else if (currentState === GameState.PAUSED) {
+        setGameState(GameState.ACTIVE);
+      }
+    }
+
     if (directionLocked.current) return;
 
     const newDirection = getNewDirection(e.key);
@@ -122,7 +137,11 @@ export default function SnakeGame() {
 
   // Game loop
   useEffect(() => {
-    if ([GameState.START_SCREEN, GameState.GAME_OVER].includes(gameState))
+    if (
+      [GameState.START_SCREEN, GameState.GAME_OVER, GameState.PAUSED].includes(
+        gameState
+      )
+    )
       return;
 
     let gameInterval = null;
@@ -253,14 +272,34 @@ export default function SnakeGame() {
           }}
         />
 
-        {/* Game Over Overlay */}
-        {[GameState.START_SCREEN, GameState.GAME_OVER].includes(gameState) && (
+        {/* Menu Overlay */}
+        {[
+          GameState.START_SCREEN,
+          GameState.GAME_OVER,
+          GameState.PAUSED,
+        ].includes(gameState) && (
           <div className="absolute inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
             <h1 className="text-2xl mb-4">
-              {gameState === GameState.START_SCREEN
-                ? "Snake Game"
-                : "Game Over!"}
+              {(() => {
+                switch (gameState) {
+                  case GameState.PAUSED:
+                    return "Paused";
+                  case GameState.GAME_OVER:
+                    return "Game Over!";
+                  case GameState.START_SCREEN:
+                  default:
+                    return "Snake Game";
+                }
+              })()}
             </h1>
+            {gameState === GameState.PAUSED && (
+              <button
+                onClick={() => setGameState(GameState.ACTIVE)}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
+              >
+                Continue
+              </button>
+            )}
             <button
               onClick={restart}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
