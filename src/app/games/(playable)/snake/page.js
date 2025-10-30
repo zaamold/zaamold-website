@@ -1,6 +1,7 @@
 "use client";
 import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scroll";
 import { useDisableSwipeScroll } from "@/components/hooks/use-disable-swipe-scroll";
+import { useVisibilityChange } from "@/components/hooks/use-visibility-change";
 import { useState, useEffect, useRef } from "react";
 
 export default function SnakeGame() {
@@ -27,6 +28,13 @@ export default function SnakeGame() {
   const DEFAULT_CELL_SIZE = 20;
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
 
+  // Pauses game if document's visibility changes
+  useVisibilityChange((isHidden) => {
+    if (isHidden && gameState === GameState.ACTIVE) {
+      setGameState(GameState.PAUSED);
+    }
+  });
+
   useEffect(() => {
     const handleResize = () => {
       const viewportWidth = window.innerWidth;
@@ -47,9 +55,10 @@ export default function SnakeGame() {
     gameStateRef.current = gameState;
   }, [gameState]);
 
-  // Handle arrow keys
+  // Handle controls
   const handleKeyDown = (e) => {
     const currentState = gameStateRef.current;
+    // Pause/un-pause
     if (e.key === "Escape") {
       console.log(currentState);
       if (currentState === GameState.ACTIVE) {
@@ -59,6 +68,15 @@ export default function SnakeGame() {
       }
     }
 
+    // Restart
+    if (
+      e.key.toLowerCase() === "r" &&
+      [GameState.GAME_OVER, GameState.PAUSED].includes(currentState)
+    ) {
+      restart();
+    }
+
+    // Player controls
     if (directionLocked.current) return;
 
     const newDirection = getNewDirection(e.key);
@@ -103,14 +121,19 @@ export default function SnakeGame() {
   };
 
   const getNewDirection = (key) => {
-    switch (key) {
-      case "ArrowUp":
+    const lowercaseKey = key.toLowerCase();
+    switch (lowercaseKey) {
+      case "arrowup":
+      case "w":
         return dir !== "DOWN" ? "UP" : null;
-      case "ArrowDown":
+      case "arrowdown":
+      case "s":
         return dir !== "UP" ? "DOWN" : null;
-      case "ArrowLeft":
+      case "arrowleft":
+      case "a":
         return dir !== "RIGHT" ? "LEFT" : null;
-      case "ArrowRight":
+      case "arrowright":
+      case "d":
         return dir !== "LEFT" ? "RIGHT" : null;
       default:
         return null;
@@ -232,6 +255,11 @@ export default function SnakeGame() {
     setGameState(GameState.ACTIVE);
   };
 
+  // Precompute overlay text value before each render (faster and cleaner than a function call in the DOM)
+  let overlayText = "Snake Game";
+  if (gameState === GameState.PAUSED) overlayText = "Paused";
+  else if (gameState === GameState.GAME_OVER) overlayText = "Game Over!";
+
   return (
     <div
       ref={gameRef}
@@ -279,19 +307,7 @@ export default function SnakeGame() {
           GameState.PAUSED,
         ].includes(gameState) && (
           <div className="absolute inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
-            <h1 className="text-2xl mb-4">
-              {(() => {
-                switch (gameState) {
-                  case GameState.PAUSED:
-                    return "Paused";
-                  case GameState.GAME_OVER:
-                    return "Game Over!";
-                  case GameState.START_SCREEN:
-                  default:
-                    return "Snake Game";
-                }
-              })()}
-            </h1>
+            <h1 className="text-2xl mb-4">{overlayText}</h1>
             {gameState === GameState.PAUSED && (
               <button
                 onClick={() => setGameState(GameState.ACTIVE)}
@@ -304,7 +320,7 @@ export default function SnakeGame() {
               onClick={restart}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
             >
-              {gameState === GameState.START_SCREEN ? "Begin" : "Restart"}
+              {gameState === GameState.START_SCREEN ? "Begin" : "Restart (r)"}
             </button>
           </div>
         )}
