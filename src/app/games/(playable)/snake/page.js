@@ -263,10 +263,10 @@ export default function SnakeGame() {
   return (
     <div
       ref={gameRef}
-      className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white"
+      className="flex flex-col items-center mt-20 h-screen bg-gray-900 text-white"
     >
       <div
-        className="relative bg-gray-800 w-[90vw] max-w-[min(100vw,400px)] aspect-square sm:w-auto sm:h-auto touch-none select-none"
+        className="relative bg-gray-800 w-[90vw] aspect-square sm:w-auto sm:h-auto touch-none select-none"
         style={{
           width: gridSize * cellSize,
           height: gridSize * cellSize,
@@ -313,7 +313,7 @@ export default function SnakeGame() {
                 onClick={() => setGameState(GameState.ACTIVE)}
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
               >
-                Continue
+                Continue (esc)
               </button>
             )}
             <button
@@ -324,6 +324,24 @@ export default function SnakeGame() {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Pause Button (mobile only) */}
+      <div className="sm:hidden mt-4">
+        <button
+          onClick={() => {
+            if (![GameState.ACTIVE, GameState.PAUSED].includes(gameState))
+              return;
+            setGameState(
+              gameState === GameState.ACTIVE
+                ? GameState.PAUSED
+                : GameState.ACTIVE
+            );
+          }}
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
+        >
+          {gameState === GameState.ACTIVE ? "Pause" : "Resume"}
+        </button>
       </div>
     </div>
   );
