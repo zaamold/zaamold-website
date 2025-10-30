@@ -9,6 +9,7 @@ export default function SnakeGame() {
   useDisableSwipeScroll(gameRef);
   const gridSize = 20; // 20x20 cells
   const GameState = Object.freeze({
+    START_SCREEN: "START_SCREEN",
     ACTIVE: "ACTIVE",
     PAUSED: "PAUSED",
     ANIMATING_DEATH: "ANIMATING_DEATH",
@@ -18,8 +19,7 @@ export default function SnakeGame() {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 5, y: 5 });
   const [dir, setDir] = useState("RIGHT");
-  const [gameState, setGameState] = useState(GameState.GAME_OVER);
-  const [gameOverText, setGameOverText] = useState("Snake Game");
+  const [gameState, setGameState] = useState(GameState.START_SCREEN);
 
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
@@ -122,7 +122,7 @@ export default function SnakeGame() {
 
   // Game loop
   useEffect(() => {
-    if ([GameState.GAME_OVER || GameState.ANIMATING_DEATH].includes(gameState))
+    if ([GameState.START_SCREEN, GameState.GAME_OVER].includes(gameState))
       return;
 
     let gameInterval = null;
@@ -202,7 +202,6 @@ export default function SnakeGame() {
   };
 
   const onGameOver = () => {
-    setGameOverText("Game Over!");
     setGameState(GameState.ANIMATING_DEATH);
   };
 
@@ -255,14 +254,18 @@ export default function SnakeGame() {
         />
 
         {/* Game Over Overlay */}
-        {gameState === GameState.GAME_OVER && (
+        {[GameState.START_SCREEN, GameState.GAME_OVER].includes(gameState) && (
           <div className="absolute inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
-            <h1 className="text-2xl mb-4">{gameOverText}</h1>
+            <h1 className="text-2xl mb-4">
+              {gameState === GameState.START_SCREEN
+                ? "Snake Game"
+                : "Game Over!"}
+            </h1>
             <button
               onClick={restart}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
             >
-              Restart
+              {gameState === GameState.START_SCREEN ? "Begin" : "Restart"}
             </button>
           </div>
         )}
