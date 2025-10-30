@@ -1,11 +1,13 @@
 "use client";
 import { useDisableArrowScroll } from "@/components/hooks/use-disable-arrow-scroll";
+import { useDisableSpacebarScroll } from "@/components/hooks/use-disable-spacebar-scroll";
 import { useDisableSwipeScroll } from "@/components/hooks/use-disable-swipe-scroll";
 import { useVisibilityChange } from "@/components/hooks/use-visibility-change";
 import { useState, useEffect, useRef } from "react";
 
 export default function SnakeGame() {
   useDisableArrowScroll();
+  useDisableSpacebarScroll();
   const gameRef = useRef(null);
   useDisableSwipeScroll(gameRef);
   const gridSize = 20; // 20x20 cells
