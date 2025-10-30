@@ -8,13 +8,18 @@ export default function SnakeGame() {
   const gameRef = useRef(null);
   useDisableSwipeScroll(gameRef);
   const gridSize = 20; // 20x20 cells
+  const GameState = Object.freeze({
+    ACTIVE: "ACTIVE",
+    PAUSED: "PAUSED",
+    ANIMATING_DEATH: "ANIMATING_DEATH",
+    GAME_OVER: "GAME_OVER",
+  });
 
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 5, y: 5 });
   const [dir, setDir] = useState("RIGHT");
-  const [gameOver, setGameOver] = useState(true);
+  const [gameState, setGameState] = useState(GameState.GAME_OVER);
   const [gameOverText, setGameOverText] = useState("Snake Game");
-  const [animatingDeath, setAnimatingDeath] = useState(false);
 
   const directionLocked = useRef(false);
   const touchStart = useRef(null);
@@ -117,8 +122,21 @@ export default function SnakeGame() {
 
   // Game loop
   useEffect(() => {
-    if (gameOver || animatingDeath) return;
-    const interval = setInterval(() => {
+    if ([GameState.GAME_OVER || GameState.ANIMATING_DEATH].includes(gameState))
+      return;
+
+    let gameInterval = null;
+    if (gameState === GameState.ANIMATING_DEATH) {
+      gameInterval = animateDeath();
+    } else {
+      gameInterval = move();
+    }
+    if (!gameInterval) return;
+    return () => clearInterval(gameInterval);
+  }, [dir, food, gameState]);
+
+  const move = () => {
+    return setInterval(() => {
       setSnake((prev) => {
         const head = { ...prev[0] };
         if (dir === "UP") head.y -= 1;
@@ -149,27 +167,22 @@ export default function SnakeGame() {
         return newSnake;
       });
     }, 150);
-    return () => clearInterval(interval);
-  }, [dir, food, gameOver, animatingDeath]);
+  };
 
-  useEffect(() => {
-    if (!animatingDeath) return;
-
+  const animateDeath = () => {
     let i = 0;
-    const interval = setInterval(() => {
+    let interval = setInterval(() => {
       setSnake((prev) => {
         if (prev.length === 0) {
           clearInterval(interval);
-          setAnimatingDeath(false);
-          setGameOver(true);
+          setGameState(GameState.GAME_OVER);
           return [];
         }
         return prev.slice(0, -1); // remove one tail segment
       });
     }, 100); // adjust speed here (ms per piece)
-
-    return () => clearInterval(interval);
-  }, [animatingDeath]);
+    return interval;
+  };
 
   const generateFood = () => {
     // Creates a collection of all grid spaces occupied by snake
@@ -190,7 +203,7 @@ export default function SnakeGame() {
 
   const onGameOver = () => {
     setGameOverText("Game Over!");
-    setAnimatingDeath(true);
+    setGameState(GameState.ANIMATING_DEATH);
   };
 
   // Restart the game
@@ -198,7 +211,7 @@ export default function SnakeGame() {
     setSnake([{ x: 10, y: 10 }]);
     setFood({ x: 5, y: 5 });
     setDir("RIGHT");
-    setGameOver(false);
+    setGameState(GameState.ACTIVE);
   };
 
   return (
@@ -242,7 +255,7 @@ export default function SnakeGame() {
         />
 
         {/* Game Over Overlay */}
-        {gameOver && (
+        {gameState === GameState.GAME_OVER && (
           <div className="absolute inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
             <h1 className="text-2xl mb-4">{gameOverText}</h1>
             <button
