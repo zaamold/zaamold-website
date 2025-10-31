@@ -39,8 +39,6 @@ export default function SnakeGame() {
   useEffect(() => {
     const savedHighScore = localStorage.getItem("game/snake/high_score");
     setHighScore(savedHighScore ? parseInt(savedHighScore, 10) : 0);
-
-    console.log("SAVED HIGH SCORE:", savedHighScore);
   }, []);
 
   // Pauses game if document's visibility changes
@@ -75,7 +73,6 @@ export default function SnakeGame() {
     const currentState = gameStateRef.current;
     // Pause/un-pause
     if (e.key === "Escape") {
-      console.log(currentState);
       if (currentState === GameState.ACTIVE) {
         setGameState(GameState.PAUSED);
       } else if (currentState === GameState.PAUSED) {
@@ -215,8 +212,6 @@ export default function SnakeGame() {
 
         const newSnake = [head, ...prev];
         if (head.x === food.x && head.y === food.y) {
-          console.log("NOM NOM");
-          console.log("Score:", score);
           setScore(score + 1);
           generateFood();
         } else {
