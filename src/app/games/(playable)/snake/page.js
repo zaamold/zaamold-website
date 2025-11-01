@@ -5,6 +5,7 @@ import { useDisableSwipeScroll } from "@/components/hooks/use-disable-swipe-scro
 import { useVisibilityChange } from "@/components/hooks/use-visibility-change";
 import StringHelper from "@/utils/string-helper";
 import { useState, useEffect, useRef } from "react";
+import "../../../../components/ui/animations.css";
 
 export default function SnakeGame() {
   useDisableArrowScroll();
@@ -234,6 +235,7 @@ export default function SnakeGame() {
           setGameState(GameState.GAME_OVER);
           if (score > highScore) {
             setHighScore(score);
+            setIsNewHighScore(true);
             localStorage.setItem("game/snake/high_score", score);
           }
           return [];
@@ -337,8 +339,34 @@ export default function SnakeGame() {
         ].includes(gameState) && (
           <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
             <div className="absolute top-2 left-2">
-              <p>High Score: {highScore}</p>
+              <p>
+                High Score:{" "}
+                <span
+                  className={
+                    isNewHighScore ? "text-yellow-400 animate-pulse" : ""
+                  }
+                >
+                  {highScore}
+                </span>
+              </p>
+
+              {isNewHighScore && (
+                <span className="absolute -bottom-4 -right-8 text-sm text-yellow-400 font-bold flex space-x-[1px]">
+                  {["N", "E", "W", "!"].map((char, i) => (
+                    <span
+                      key={i}
+                      className="animate-pulse"
+                      style={{
+                        animationDelay: `${i * 0.1}s`,
+                      }}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </span>
+              )}
             </div>
+
             <h1 className="text-2xl mb-4">{overlayText}</h1>
             {gameState === GameState.PAUSED && (
               <button
