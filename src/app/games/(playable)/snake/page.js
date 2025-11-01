@@ -54,6 +54,7 @@ export default function SnakeGame() {
 
   const DEFAULT_PLAYER_DATA = {
     coins: 0,
+    hasGottenACoin: false,
     unlockedPalettes: ["classic"], // default starting palette
     selectedPalette: "classic",
     highScore: 0,
@@ -313,6 +314,7 @@ export default function SnakeGame() {
           // Add coins earned this run
           if (runCoins > 0) {
             updatedData.coins += runCoins;
+            updatedData.hasGottenACoin = true;
             setRunCoins(0);
             playerDataChanged = true;
           }
@@ -374,6 +376,10 @@ export default function SnakeGame() {
     setDir("RIGHT");
     setIsNewHighScore(false);
     setGameState(GameState.ACTIVE);
+  };
+
+  const displayCoinCount = () => {
+    return playerData.coins > 0 || playerData.hasGottenACoin;
   };
 
   // Precompute overlay text value before each render (faster and cleaner than a function call in the DOM)
@@ -460,7 +466,7 @@ export default function SnakeGame() {
         ].includes(gameState) && (
           <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center">
             <div className="absolute top-2 left-2">
-              {playerData.coins > 0 && (
+              {displayCoinCount() && (
                 <p>
                   Coins:{" "}
                   <span className={"text-yellow-400 animate-pulse"}>
