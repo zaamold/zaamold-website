@@ -1,7 +1,9 @@
+"use client";
 import ZoomingImage from "@/components/ui/zooming-image";
 import Helper from "@/utils/helper";
 import Link from "next/link";
 import "../../components/ui/animations.css";
+import { useEffect, useState } from "react";
 
 export default function GamesPage() {
   const gameList = [
@@ -32,14 +34,19 @@ export default function GamesPage() {
     "(^_^)/",
   ];
 
-  const tagLineIndex = Helper.getRandomInt(0, tagLines.length);
+  const [tagLine, setTagLine] = useState("");
+
+  useEffect(() => {
+    const randomIndex = Helper.getRandomInt(0, tagLines.length);
+    setTagLine(tagLines[randomIndex]);
+  }, []);
 
   return (
     <div className="min-h-screen max-w-7xl mx-auto mt-10 px-6">
       <h1 className="relative text-4xl text-center font-bold mb-4">
         Games
         <p className="games-splash-text z-10 text-base font-semibold absolute top-1/2 left-[72%] sm:left-[65%] md:left-[60%] lg:left-[58%] -translate-x-1/2 -translate-y-1/2 text-purple-600 whitespace-nowrap">
-          {tagLines[tagLineIndex]}
+          {tagLine}
         </p>
       </h1>
 
