@@ -9,8 +9,8 @@ export default function GamesPage() {
       name: "Snake Game",
       href: "/games/snake",
       img: {
-        style: "bg-blue-500 transition-all rounded-lg",
-        src: "/images/headshot/headshot-01.png",
+        style: "transition-all rounded-lg",
+        src: "/icons/games/snake.png",
         width: 2002,
         height: 2002,
         alt: "Snake Game Image",
