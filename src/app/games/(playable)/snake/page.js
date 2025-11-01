@@ -21,12 +21,27 @@ export default function SnakeGame() {
     GAME_OVER: "GAME_OVER",
   });
 
-  const SNAKE_PALETTES = {
-    classic: ["#22c55e"], // solid green
-    fire: ["#f97316", "#ef4444", "#b91c1c"], // orange → red
-    ocean: ["#3b82f6", "#06b6d4", "#0ea5e9"], // blue shades
-    neon: ["#d946ef", "#a855f7", "#f0abfc"], // purple/pink neon
-    forest: ["#16a34a", "#166534", "#4ade80"], // deep green
+  const COLOR_PALETTES = {
+    classic: {
+      snake: ["#22c55e"], // bright green
+      food: "#dc2626", // strong red (natural contrast, classic apple look)
+    },
+    fire: {
+      snake: ["#f97316", "#ef4444", "#b91c1c"], // orange → red
+      food: "#2563eb", // vivid royal blue, stands out sharply
+    },
+    ocean: {
+      snake: ["#3b82f6", "#06b6d4", "#0ea5e9"], // blue tones
+      food: "#f43f5e", // pink-red coral, complementary to teal/blue
+    },
+    neon: {
+      snake: ["#d946ef", "#a855f7", "#f0abfc"], // purples/pinks
+      food: "#00f5a0", // bright neon mint/teal, high-contrast electric look
+    },
+    forest: {
+      snake: ["#166534", "#16a34a", "#4ade80"], // deep to light greens
+      food: "#e11d48", // vibrant crimson berry red
+    },
   };
 
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
@@ -51,7 +66,7 @@ export default function SnakeGame() {
     setHighScore(savedHighScore ? parseInt(savedHighScore, 10) : 0);
 
     const savedPalette = localStorage.getItem("game/snake/palette");
-    if (savedPalette && SNAKE_PALETTES[savedPalette]) {
+    if (savedPalette && COLOR_PALETTES[savedPalette]) {
       setSnakePalette(savedPalette);
     }
   }, []);
@@ -251,6 +266,7 @@ export default function SnakeGame() {
       setSnake((prev) => {
         if (prev.length === 0) {
           clearInterval(interval);
+          setFood();
           setGameState(GameState.GAME_OVER);
           if (score > highScore) {
             setHighScore(score);
@@ -318,13 +334,15 @@ export default function SnakeGame() {
         }}
       >
         {/* Score */}
-        <p className="absolute z-30 top-4 left-1/2 -translate-x-1/2 opacity-50 text-lg text-center">
-          {score}
-        </p>
+        {gameState !== GameState.GAME_OVER && (
+          <p className="absolute z-30 top-4 left-1/2 -translate-x-1/2 opacity-50 text-lg text-center">
+            {score}
+          </p>
+        )}
 
         {/* Snake segments */}
         {snake.map((seg, i) => {
-          const colors = SNAKE_PALETTES[snakePalette];
+          const colors = COLOR_PALETTES[snakePalette].snake;
           const color =
             colors.length === 1 ? colors[0] : colors[i % colors.length]; // cycle through palette colors
 
@@ -348,8 +366,9 @@ export default function SnakeGame() {
         {/* Food */}
         {food && (
           <div
-            className="absolute bg-red-500 rounded-sm"
+            className="absolute rounded-sm"
             style={{
+              backgroundColor: COLOR_PALETTES[snakePalette].food,
               width: cellSize,
               height: cellSize,
               transform: `translate(${food.x * cellSize}px, ${
@@ -365,7 +384,7 @@ export default function SnakeGame() {
           GameState.GAME_OVER,
           GameState.PAUSED,
         ].includes(gameState) && (
-          <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
+          <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center">
             <div className="absolute top-2 left-2">
               {highScore > 0 && (
                 <p>
@@ -414,19 +433,20 @@ export default function SnakeGame() {
             )}
             <button
               onClick={restart}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded"
+              className="px-4 py-2 my-4 bg-purple-600 hover:bg-purple-700 rounded"
             >
               {gameState === GameState.START_SCREEN
                 ? "Begin"
                 : "Restart" + StringHelper.desktopControls("r")}
             </button>
 
-            <div className="mt-4 flex space-x-2">
-              {Object.entries(SNAKE_PALETTES).map(([key, colors]) => (
+            <p className="mt-6 text-sm italic text-gray-300">Color Palettes</p>
+            <div className="flex space-x-2">
+              {Object.entries(COLOR_PALETTES).map(([key, colors]) => (
                 <button
                   key={key}
                   onClick={() => handlePaletteChange(key)}
-                  className={`p-1 rounded border-2 ${
+                  className={`p-1 rounded border-2 hover:animate-pulse hover:bg-gray-700 transition-all ${
                     snakePalette === key
                       ? "border-yellow-400"
                       : "border-transparent"
@@ -436,7 +456,7 @@ export default function SnakeGame() {
                     {key.charAt(0).toUpperCase() + key.slice(1)}
                   </p>
                   <div className="flex items-center justify-center space-x-[2px]">
-                    {colors.map((c, i) => (
+                    {colors.snake.map((c, i) => (
                       <div
                         key={i}
                         className="w-3 h-3 rounded-sm"
