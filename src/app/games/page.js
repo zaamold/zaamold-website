@@ -21,13 +21,15 @@ export default function GamesPage() {
   ];
 
   const tagLines = [
-    "Come on, pick one!",
+    // "Come on, pick one!", // I'll put this back when there's more than one :)
     "Step right up, step right up",
     "Games games games!",
     "I'll make more of these eventually",
     "oh snap",
     "One-stop shop",
     "What will it do with a really long one? Hwehwehwehwehwehwehwehwe",
+    ":)",
+    "(^_^)/",
   ];
 
   const tagLineIndex = Helper.getRandomInt(0, tagLines.length);
