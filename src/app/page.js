@@ -37,7 +37,7 @@ export default function Home() {
         </div>
         <div className="h-2 w-full bg-gradient-to-b from-white to-purple-50"></div>
         <div className="bg-purple-50 py-20 flex flex-col max-w-full justify-around items-center">
-          <p className="text-3xl md:text-4xl font-bold text-center">
+          <p className="text-3xl md:text-4xl font-bold text-center px-4 md:px-0">
             Want to know more about my career?
           </p>
           <div className="flex md:flex-row flex-col w-full justify-center items-center py-8 gap-8">
