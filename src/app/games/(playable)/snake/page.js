@@ -22,7 +22,7 @@ export default function SnakeGame() {
   });
 
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-  const [food, setFood] = useState({ x: 5, y: 5 });
+  const [food, setFood] = useState();
   const [dir, setDir] = useState("RIGHT");
   const [gameState, setGameState] = useState(GameState.START_SCREEN);
   const gameStateRef = useRef(gameState);
@@ -275,7 +275,7 @@ export default function SnakeGame() {
   // Restart the game
   const restart = () => {
     setSnake([{ x: 10, y: 10 }]);
-    setFood({ x: 5, y: 5 });
+    generateFood();
     setScore(0);
     setDir("RIGHT");
     setGameState(GameState.ACTIVE);
@@ -320,16 +320,18 @@ export default function SnakeGame() {
         ))}
 
         {/* Food */}
-        <div
-          className="absolute bg-red-500 rounded-sm"
-          style={{
-            width: cellSize,
-            height: cellSize,
-            transform: `translate(${food.x * cellSize}px, ${
-              food.y * cellSize
-            }px)`,
-          }}
-        />
+        {food && (
+          <div
+            className="absolute bg-red-500 rounded-sm"
+            style={{
+              width: cellSize,
+              height: cellSize,
+              transform: `translate(${food.x * cellSize}px, ${
+                food.y * cellSize
+              }px)`,
+            }}
+          />
+        )}
 
         {/* Menu Overlay */}
         {[
