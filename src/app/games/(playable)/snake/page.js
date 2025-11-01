@@ -6,6 +6,7 @@ import { useVisibilityChange } from "@/components/hooks/use-visibility-change";
 import StringHelper from "@/utils/string-helper";
 import { useState, useEffect, useRef } from "react";
 import "../../../../components/ui/animations.css";
+import { Lock } from "lucide-react";
 
 export default function SnakeGame() {
   useDisableArrowScroll();
@@ -25,22 +26,27 @@ export default function SnakeGame() {
     classic: {
       snake: ["#22c55e"], // bright green
       food: "#dc2626", // strong red (natural contrast, classic apple look)
+      cost: 0,
     },
     fire: {
       snake: ["#f97316", "#ef4444", "#b91c1c"], // orange → red
       food: "#2563eb", // vivid royal blue, stands out sharply
+      cost: 5,
     },
     ocean: {
       snake: ["#3b82f6", "#06b6d4", "#0ea5e9"], // blue tones
       food: "#f43f5e", // pink-red coral, complementary to teal/blue
-    },
-    neon: {
-      snake: ["#d946ef", "#a855f7", "#f0abfc"], // purples/pinks
-      food: "#00f5a0", // bright neon mint/teal, high-contrast electric look
+      cost: 10,
     },
     forest: {
       snake: ["#166534", "#16a34a", "#4ade80"], // deep to light greens
       food: "#e11d48", // vibrant crimson berry red
+      cost: 15,
+    },
+    neon: {
+      snake: ["#d946ef", "#a855f7", "#f0abfc"], // purples/pinks
+      food: "#00f5a0", // bright neon mint/teal, high-contrast electric look
+      cost: 20,
     },
   };
 
@@ -272,6 +278,7 @@ export default function SnakeGame() {
         } else if (coin && head.x === coin.x && head.y === coin.y) {
           setCoin();
           setRunCoins(runCoins + 1);
+          newSnake.pop();
         } else {
           newSnake.pop();
         }
@@ -475,7 +482,7 @@ export default function SnakeGame() {
               )}
 
               {isNewHighScore && (
-                <span className="absolute -bottom-4 -right-8 text-sm text-yellow-400 font-bold flex space-x-[1px]">
+                <span className="absolute -bottom-4 -right-6 text-sm text-yellow-400 font-bold flex space-x-[1px]">
                   {["N", "E", "W", "!"].map((char, i) => (
                     <span
                       key={i}
@@ -517,30 +524,61 @@ export default function SnakeGame() {
 
             <p className="mt-6 text-sm italic text-gray-300">Color Palettes</p>
             <div className="flex space-x-2">
-              {Object.entries(COLOR_PALETTES).map(([key, colors]) => (
-                <button
-                  key={key}
-                  onClick={() => handlePaletteChange(key)}
-                  className={`p-1 rounded border-2 hover:animate-pulse hover:bg-gray-700 transition-all ${
-                    playerData.selectedPalette === key
-                      ? "border-yellow-400"
-                      : "border-transparent"
-                  }`}
-                >
-                  <p className="text-sm text-center">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </p>
-                  <div className="flex items-center justify-center space-x-[2px]">
-                    {colors.snake.map((c, i) => (
-                      <div
-                        key={i}
-                        className="w-3 h-3 rounded-sm"
-                        style={{ background: c }}
-                      />
-                    ))}
-                  </div>
-                </button>
-              ))}
+              {Object.entries(COLOR_PALETTES).map(([key, colors]) => {
+                const unlocked = playerData.unlockedPalettes.includes(key);
+                const cost = colors.cost;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      if (!unlocked && playerData.coins >= cost) {
+                        const updated = {
+                          ...playerData,
+                          coins: playerData.coins - cost,
+                          unlockedPalettes: [
+                            ...playerData.unlockedPalettes,
+                            key,
+                          ],
+                          selectedPalette: key,
+                        };
+                        setPlayerData(updated);
+                        savePlayerData(updated);
+                      } else if (unlocked) {
+                        handlePaletteChange(key);
+                      }
+                    }}
+                    className={`relative p-1 rounded border-2 hover:animate-pulse hover:bg-gray-700 transition-all ${
+                      playerData.selectedPalette === key
+                        ? "border-yellow-400"
+                        : "border-transparent"
+                    }`}
+                  >
+                    {!unlocked && (
+                      <div className="absolute w-full h-full inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <Lock
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                          size={24}
+                        />
+                      </div>
+                    )}
+                    <p className="text-sm text-center">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </p>
+                    <div className="flex items-center justify-center space-x-[2px]">
+                      {colors.snake.map((c, i) => (
+                        <div
+                          key={i}
+                          className="w-3 h-3 rounded-sm"
+                          style={{ background: c }}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs mt-1">
+                      {unlocked ? "" : `${cost} coins`}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
