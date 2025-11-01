@@ -18,10 +18,14 @@ export default function LayoutWrapper({ children }) {
   // const isPlayable = segments[0] === "games" && segments.length > 1;
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-white text-gray-900">
       {!isPlayable && <Header />}
-      {children}
+
+      {/* Main content area */}
+      <main className="flex-grow">{children}</main>
+
+      {/* Footer is always pinned to bottom */}
       {!isPlayable && <Footer />}
-    </>
+    </div>
   );
 }

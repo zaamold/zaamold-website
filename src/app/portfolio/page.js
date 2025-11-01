@@ -86,6 +86,7 @@ export default function PortfolioPage() {
         <h2 className="text-4xl font-bold text-center mb-6">My Journey</h2>
         <Timeline events={careerEvents} />
       </section>
+      <div className="h-2 w-full bg-gradient-to-b from-white to-purple-50"></div>
       <section className="px-6 pt-20 pb-10 bg-purple-50">
         <h2 className="text-4xl font-bold text-center mb-6">My Website</h2>
         <div className="max-w-4xl flex flex-col mx-auto gap-y-4">
@@ -102,7 +103,7 @@ export default function PortfolioPage() {
         </div>
         <TechGrid />
         <p className="text-center text-xl">
-          Want to check my work? View the website's code on{" "}
+          Want to see under the hood? View this website's code on{" "}
           <a
             href="https://github.com/zaamold/zaamold-website"
             target="_blank"
