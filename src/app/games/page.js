@@ -11,8 +11,8 @@ export default function GamesPage() {
       img: {
         style: "transition-all rounded-lg",
         src: "/icons/games/snake.png",
-        width: 2002,
-        height: 2002,
+        width: 500,
+        height: 500,
         alt: "Snake Game Image",
         hoverText: "Chase the snacks!",
       },
