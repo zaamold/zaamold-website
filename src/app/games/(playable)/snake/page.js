@@ -21,7 +21,16 @@ export default function SnakeGame() {
     GAME_OVER: "GAME_OVER",
   });
 
+  const SNAKE_PALETTES = {
+    classic: ["#22c55e"], // solid green
+    fire: ["#f97316", "#ef4444", "#b91c1c"], // orange → red
+    ocean: ["#3b82f6", "#06b6d4", "#0ea5e9"], // blue shades
+    neon: ["#d946ef", "#a855f7", "#f0abfc"], // purple/pink neon
+    forest: ["#16a34a", "#166534", "#4ade80"], // deep green
+  };
+
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
+  const [snakePalette, setSnakePalette] = useState("classic");
   const [food, setFood] = useState();
   const [dir, setDir] = useState("RIGHT");
   const [gameState, setGameState] = useState(GameState.START_SCREEN);
@@ -40,7 +49,17 @@ export default function SnakeGame() {
   useEffect(() => {
     const savedHighScore = localStorage.getItem("game/snake/high_score");
     setHighScore(savedHighScore ? parseInt(savedHighScore, 10) : 0);
+
+    const savedPalette = localStorage.getItem("game/snake/palette");
+    if (savedPalette && SNAKE_PALETTES[savedPalette]) {
+      setSnakePalette(savedPalette);
+    }
   }, []);
+
+  const handlePaletteChange = (paletteKey) => {
+    setSnakePalette(paletteKey);
+    localStorage.setItem("game/snake/palette", paletteKey);
+  };
 
   // Pauses game if document's visibility changes
   useVisibilityChange((isHidden) => {
@@ -304,20 +323,27 @@ export default function SnakeGame() {
         </p>
 
         {/* Snake segments */}
-        {snake.map((seg, i) => (
-          <div
-            key={i}
-            className="absolute bg-green-500 transition-transform duration-150"
-            style={{
-              width: cellSize,
-              height: cellSize,
-              transform: `translate(${seg.x * cellSize}px, ${
-                seg.y * cellSize
-              }px)`,
-              borderRadius: i === 0 ? "4px" : "2px",
-            }}
-          />
-        ))}
+        {snake.map((seg, i) => {
+          const colors = SNAKE_PALETTES[snakePalette];
+          const color =
+            colors.length === 1 ? colors[0] : colors[i % colors.length]; // cycle through palette colors
+
+          return (
+            <div
+              key={i}
+              className="absolute transition-transform duration-150"
+              style={{
+                backgroundColor: color,
+                width: cellSize,
+                height: cellSize,
+                transform: `translate(${seg.x * cellSize}px, ${
+                  seg.y * cellSize
+                }px)`,
+                borderRadius: i === 0 ? "4px" : "2px",
+              }}
+            />
+          );
+        })}
 
         {/* Food */}
         {food && (
@@ -394,6 +420,33 @@ export default function SnakeGame() {
                 ? "Begin"
                 : "Restart" + StringHelper.desktopControls("r")}
             </button>
+
+            <div className="mt-4 flex space-x-2">
+              {Object.entries(SNAKE_PALETTES).map(([key, colors]) => (
+                <button
+                  key={key}
+                  onClick={() => handlePaletteChange(key)}
+                  className={`p-1 rounded border-2 ${
+                    snakePalette === key
+                      ? "border-yellow-400"
+                      : "border-transparent"
+                  }`}
+                >
+                  <p className="text-sm text-center">
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </p>
+                  <div className="flex items-center justify-center space-x-[2px]">
+                    {colors.map((c, i) => (
+                      <div
+                        key={i}
+                        className="w-3 h-3 rounded-sm"
+                        style={{ background: c }}
+                      />
+                    ))}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
