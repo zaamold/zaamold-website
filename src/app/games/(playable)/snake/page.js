@@ -94,7 +94,6 @@ export default function SnakeGame() {
 
   const handlePaletteChange = (paletteKey) => {
     setPlayerData({ ...playerData, selectedPalette: paletteKey });
-    localStorage.setItem("game/snake/palette", paletteKey);
   };
 
   // Pauses game if document's visibility changes
@@ -290,19 +289,32 @@ export default function SnakeGame() {
       setSnake((prev) => {
         if (prev.length === 0) {
           clearInterval(interval);
-          setFood();
+          setFood(undefined);
+          setCoin(undefined);
           setGameState(GameState.GAME_OVER);
+
+          let playerDataChanged = false;
+          const updatedData = { ...playerData };
+
+          // Update high score if needed
           if (score > playerData.highScore) {
-            setPlayerData({ ...playerData, highScore: score });
+            updatedData.highScore = score;
             setIsNewHighScore(true);
+            playerDataChanged = true;
           }
+
+          // Add coins earned this run
           if (runCoins > 0) {
-            setPlayerData({
-              ...playerData,
-              coins: playerData.coins + runCoins,
-            });
+            updatedData.coins += runCoins;
             setRunCoins(0);
+            playerDataChanged = true;
           }
+
+          // Save updates if anything changed
+          if (playerDataChanged) {
+            setPlayerData(updatedData);
+          }
+
           return [];
         }
         i++;
@@ -349,9 +361,11 @@ export default function SnakeGame() {
   // Restart the game
   const restart = () => {
     setSnake([{ x: 10, y: 10 }]);
+    setCoin(undefined);
     generateFood();
     setScore(0);
     setDir("RIGHT");
+    setIsNewHighScore(false);
     setGameState(GameState.ACTIVE);
   };
 
