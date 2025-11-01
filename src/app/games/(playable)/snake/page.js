@@ -339,16 +339,18 @@ export default function SnakeGame() {
         ].includes(gameState) && (
           <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center space-y-4">
             <div className="absolute top-2 left-2">
-              <p>
-                High Score:{" "}
-                <span
-                  className={
-                    isNewHighScore ? "text-yellow-400 animate-pulse" : ""
-                  }
-                >
-                  {highScore}
-                </span>
-              </p>
+              {highScore > 0 && (
+                <p>
+                  High Score:{" "}
+                  <span
+                    className={
+                      isNewHighScore ? "text-yellow-400 animate-pulse" : ""
+                    }
+                  >
+                    {highScore}
+                  </span>
+                </p>
+              )}
 
               {isNewHighScore && (
                 <span className="absolute -bottom-4 -right-8 text-sm text-yellow-400 font-bold flex space-x-[1px]">
