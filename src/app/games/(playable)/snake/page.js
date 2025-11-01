@@ -44,9 +44,21 @@ export default function SnakeGame() {
     },
   };
 
+  const PLAYER_DATA_KEY = "game/snake/player_data";
+
+  const DEFAULT_PLAYER_DATA = {
+    coins: 0,
+    unlockedPalettes: ["classic"], // default starting palette
+    selectedPalette: "classic",
+    highScore: 0,
+  };
+
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-  const [snakePalette, setSnakePalette] = useState("classic");
+  const [playerData, setPlayerData] = useState(DEFAULT_PLAYER_DATA);
   const [food, setFood] = useState();
+  const [coin, setCoin] = useState(null);
+  // Accumulated coins in a given playthrough
+  const [runCoins, setRunCoins] = useState(0);
   const [dir, setDir] = useState("RIGHT");
   const [gameState, setGameState] = useState(GameState.START_SCREEN);
   const gameStateRef = useRef(gameState);
@@ -58,21 +70,30 @@ export default function SnakeGame() {
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
 
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
 
   useEffect(() => {
-    const savedHighScore = localStorage.getItem("game/snake/high_score");
-    setHighScore(savedHighScore ? parseInt(savedHighScore, 10) : 0);
-
-    const savedPalette = localStorage.getItem("game/snake/palette");
-    if (savedPalette && COLOR_PALETTES[savedPalette]) {
-      setSnakePalette(savedPalette);
-    }
+    setPlayerData(loadPlayerData());
   }, []);
 
+  useEffect(() => {
+    if (playerData) {
+      savePlayerData();
+    }
+  }, [playerData]);
+
+  const loadPlayerData = () => {
+    const data = localStorage.getItem(PLAYER_DATA_KEY);
+    return data ? JSON.parse(data) : DEFAULT_PLAYER_DATA;
+  };
+
+  const savePlayerData = () => {
+    if (!playerData) return;
+    localStorage.setItem(PLAYER_DATA_KEY, JSON.stringify(playerData));
+  };
+
   const handlePaletteChange = (paletteKey) => {
-    setSnakePalette(paletteKey);
+    setPlayerData({ ...playerData, selectedPalette: paletteKey });
     localStorage.setItem("game/snake/palette", paletteKey);
   };
 
@@ -249,6 +270,9 @@ export default function SnakeGame() {
         if (head.x === food.x && head.y === food.y) {
           setScore(score + 1);
           generateFood();
+        } else if (coin && head.x === coin.x && head.y === coin.y) {
+          setCoin();
+          setRunCoins(runCoins + 1);
         } else {
           newSnake.pop();
         }
@@ -268,10 +292,16 @@ export default function SnakeGame() {
           clearInterval(interval);
           setFood();
           setGameState(GameState.GAME_OVER);
-          if (score > highScore) {
-            setHighScore(score);
+          if (score > playerData.highScore) {
+            setPlayerData({ ...playerData, highScore: score });
             setIsNewHighScore(true);
-            localStorage.setItem("game/snake/high_score", score);
+          }
+          if (runCoins > 0) {
+            setPlayerData({
+              ...playerData,
+              coins: playerData.coins + runCoins,
+            });
+            setRunCoins(0);
           }
           return [];
         }
@@ -287,6 +317,15 @@ export default function SnakeGame() {
   };
 
   const generateFood = () => {
+    setFood(getRandomUnoccupiedSpace());
+
+    // Random chance of generating a coin, if one does not already exist
+    if (!coin && Math.random() < 0.2) {
+      setCoin(getRandomUnoccupiedSpace());
+    }
+  };
+
+  const getRandomUnoccupiedSpace = () => {
     // Creates a collection of all grid spaces occupied by snake
     const occupied = new Set(snake.map((seg) => `${seg.x},${seg.y}`));
     const freeSpots = [];
@@ -298,9 +337,9 @@ export default function SnakeGame() {
       }
     }
 
-    // Picks an unoccupied space to put the next piece of food in
+    // Picks an unoccupied space to put an object in
     const index = Math.floor(Math.random() * freeSpots.length);
-    setFood(freeSpots[index]);
+    return freeSpots[index];
   };
 
   const onGameOver = () => {
@@ -342,7 +381,7 @@ export default function SnakeGame() {
 
         {/* Snake segments */}
         {snake.map((seg, i) => {
-          const colors = COLOR_PALETTES[snakePalette].snake;
+          const colors = COLOR_PALETTES[playerData.selectedPalette].snake;
           const color =
             colors.length === 1 ? colors[0] : colors[i % colors.length]; // cycle through palette colors
 
@@ -368,11 +407,25 @@ export default function SnakeGame() {
           <div
             className="absolute rounded-sm"
             style={{
-              backgroundColor: COLOR_PALETTES[snakePalette].food,
+              backgroundColor: COLOR_PALETTES[playerData.selectedPalette].food,
               width: cellSize,
               height: cellSize,
               transform: `translate(${food.x * cellSize}px, ${
                 food.y * cellSize
+              }px)`,
+            }}
+          />
+        )}
+
+        {/* Coin */}
+        {coin && (
+          <div
+            className="absolute bg-yellow-500 rounded-sm animate-pulse"
+            style={{
+              width: cellSize,
+              height: cellSize,
+              transform: `translate(${coin.x * cellSize}px, ${
+                coin.y * cellSize
               }px)`,
             }}
           />
@@ -386,7 +439,15 @@ export default function SnakeGame() {
         ].includes(gameState) && (
           <div className="absolute z-40 inset-0 bg-black opacity-80 flex flex-col items-center justify-center">
             <div className="absolute top-2 left-2">
-              {highScore > 0 && (
+              {playerData.coins > 0 && (
+                <p>
+                  Coins:{" "}
+                  <span className={"text-yellow-400 animate-pulse"}>
+                    {playerData.coins}
+                  </span>
+                </p>
+              )}
+              {playerData.highScore > 0 && (
                 <p>
                   High Score:{" "}
                   <span
@@ -394,7 +455,7 @@ export default function SnakeGame() {
                       isNewHighScore ? "text-yellow-400 animate-pulse" : ""
                     }
                   >
-                    {highScore}
+                    {playerData.highScore}
                   </span>
                 </p>
               )}
@@ -447,7 +508,7 @@ export default function SnakeGame() {
                   key={key}
                   onClick={() => handlePaletteChange(key)}
                   className={`p-1 rounded border-2 hover:animate-pulse hover:bg-gray-700 transition-all ${
-                    snakePalette === key
+                    playerData.selectedPalette === key
                       ? "border-yellow-400"
                       : "border-transparent"
                   }`}
