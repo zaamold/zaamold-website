@@ -35,6 +35,13 @@ export default function TechGrid() {
       link: "https://vercel.com/docs",
       icon: "/icons/vercel-icon.png",
     },
+    {
+      name: "ChatGPT",
+      description:
+        "An AI assistant by OpenAI that helps with coding, writing, and creative problem-solving.",
+      link: "https://openai.com/chatgpt",
+      icon: "/icons/chatgpt-icon.png",
+    },
   ];
 
   const [flipped, setFlipped] = useState({});
